@@ -7,3 +7,7 @@ So, this is based on my BASIC.h(1988), bib.h(1989), bibc.py (c/cpp compat),
 func.py (basic functions), php.py (php compat).
 
 This has no warranties.
+
+License
+
+https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
