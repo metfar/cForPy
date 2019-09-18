@@ -7,6 +7,11 @@
 #  I started it when I began to study C language, with a QBasic baggage.
 #  So, this is based on my BASIC.h(1988), bib.h(1989), bibc.py (c/cpp compat),
 #  func.py (basic functions), php.py (php compat).
+#  Historical previous approximations:
+#  https://sourceforge.net/projects/pythonconsoleproje/ 
+#  https://github.com/metfar/pyInfo
+
+#  Sister project:  https://github.com/metfar/javaprintf
 
 #  This has no warranties.
 #
