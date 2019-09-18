@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  cforpy.py
+#  cforpy.py - cForPy project: https://github.com/metfar/cForPy
 #  
-#  https://raw.githubusercontent.com/metfar/cForPy/master/cforpy.py
+#  File: https://raw.githubusercontent.com/metfar/cForPy/master/cforpy.py
 #
 #  This library is a combination of a lot of previous jobs.
 #  I started it when I began to study C language, with a gw/qbas!c baggage.
