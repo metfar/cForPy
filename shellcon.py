@@ -121,15 +121,22 @@ def main(args):
 	APP=vargs.pop(0);
 	WIDTH,HEIGHT=os.get_terminal_size();
 	print("*"*WIDTH);
-	form="{:^"+str(WIDTH-4)+"}";
-	for f in range(3,HEIGHT//2-1):
+	form1="{:^"+str(WIDTH-4)+"}";
+	form2="{:<"+str(WIDTH-4)+"}";
+	for f in range(3):
 		print("*"," "*(WIDTH-4),"*");
-	print("*",form.format(APP),"*");
-	for f in range(3,HEIGHT//2-1):
+	print("*",form1.format(APP),"*");
+	for f in range(3):
+		print("*"," "*(WIDTH-4),"*");
+	
+	print("*"*WIDTH);
+	for f in execute("ls")[OUTPUT]:
+		print("*",form2.format(f),"*");
+	
+	for f in range(1,(HEIGHT-8)//2):
 		print("*"," "*(WIDTH-4),"*");
 	print("*"*WIDTH);
-	print(execute("ls")[OUTPUT]);
-	print("*"*WIDTH);
+	
 	
 	print();
 	return (0);
@@ -137,5 +144,6 @@ def main(args):
 if __name__ == '__main__':
 	sys.exit(main(sys.argv));
 
-	
-#from https://raw.githubusercontent.com/metfar/cForPy/master/shellcon.py
+
+#https://raw.githubusercontent.com/metfar/cForPy/master/shellcon.py
+# vim: syntax=python ts=4 sw=4 sts=4 sr noet
