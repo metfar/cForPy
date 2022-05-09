@@ -28,7 +28,10 @@ import os;
 import tempfile;
 
 DIRES=[];
-
+TIMEOUT=10;
+OUTPUT="output";
+RETURN="return";
+ERROR="error";
 def exists(name):
 	"""
 	File Functions
@@ -65,6 +68,8 @@ def mkdires(arr_dirs=["Temp"]):
 	
 	"""
 	global DIRES;
+	if(type(arr_dirs)==type("casa")):
+		arr_dirs=[arr_dirs];
 	for f in arr_dirs:
 		if not(dirExists(f)): 
 			os.makedirs(f,exist_ok=True);
@@ -91,15 +96,19 @@ def execute(cmd):
 	f.write(HEADER+cmd+FOOT);
 	f.close();
 	chmod(fname,777);
-	subprocess.call(fname);
+	tmp=subprocess.run([fname],timeout=TIMEOUT,input=None,capture_output=True);
 	os.unlink(fname);
+	out={	RETURN:	tmp.returncode,
+			OUTPUT:	str(tmp.stdout)[2:-1].split("\\n"),
+			ERROR:	str(tmp.stderr)[2:-1].split("\\n")};
+	return(out);
 	
 def scp(source,target):
 	"""
 		scp(From,To)
 	"""
-	execute("scp "+str(source)+" "+str(target)+" 1>/dev/null 2>/dev/null");
-	#pass;
+	out=execute("scp "+str(source)+" "+str(target)+" 1>/dev/null 2>/dev/null");
+	return(out);
 
 def file_get_content(name):
 	tmp=open(name,"r");
@@ -119,10 +128,14 @@ def main(args):
 	for f in range(3,HEIGHT//2-1):
 		print("*"," "*(WIDTH-4),"*");
 	print("*"*WIDTH);
-	print();
-	execute("ls");
+	print(execute("ls")[OUTPUT]);
+	print("*"*WIDTH);
+	
 	print();
 	return (0);
 
 if __name__ == '__main__':
 	sys.exit(main(sys.argv));
+
+	
+#from https://raw.githubusercontent.com/metfar/cForPy/master/shellcon.py
