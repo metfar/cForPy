@@ -27,6 +27,8 @@ import subprocess;
 import os;
 import tempfile;
 
+DIRES=[];
+
 def exists(name):
 	"""
 	File Functions
@@ -63,7 +65,7 @@ def mkdires(arr_dirs=["Temp"]):
 	
 	"""
 	global DIRES;
-	for f in ["Temp"]:
+	for f in arr_dirs:
 		if not(dirExists(f)): 
 			os.makedirs(f,exist_ok=True);
 		if(not f in DIRES):
