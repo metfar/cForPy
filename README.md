@@ -6,6 +6,8 @@ I started it when I began to study C language, with a QBasic baggage.
 So, this is based on my BASIC.h(1988), bib.h(1989), bibc.py (c/cpp compat),
 func.py (basic functions), php.py (php compat).
 
+Some modifications to work with bash.
+
 This has no warranties.
 
 License
