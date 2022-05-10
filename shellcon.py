@@ -26,6 +26,8 @@ import sys;
 import subprocess;
 import os;
 import tempfile;
+import datetime;
+
 
 DIRES=[];
 TIMEOUT=10;
@@ -115,30 +117,126 @@ def file_get_content(name):
 	content=tmp.read();
 	return(content);
 
+MODE,INODE,IWHERE,NLINK="MODE","INODE","IWHERE","NLINK";
+UID,GID,SIZE="UID","GID","SIZE";
+ACCESS_TIME,MOD_TIME,CHANGE_TIME="ATIME","MTIME","CTIME";
+NAN=None;
+ESC=chr(27);
+BLACK,RED,GREEN,YELLOW,BLUE,MAGENTA,CYAN,WHITE=range(0,8);
+COLORS=[BLACK,BLUE,GREEN,CYAN,RED,MAGENTA,YELLOW,WHITE];
+
+INK=WHITE;
+PAPER=BLACK;
+
+def file_stats(name):
+	(mode, ino, dev, nlink, uid, gid, size, atime, mtime, ctime) = os.stat(name);
+	out={	MODE:			mode, 
+			INODE:			ino, 
+			IWHERE:			dev, 
+			NLINK:			nlink, 
+			UID:			uid, 
+			GID:			gid, 
+			SIZE:			size, 
+			ACCESS_TIME:	atime, 
+			MOD_TIME:		mtime, 
+			CHANGE_TIME:	ctime};
+	return(out);
+
+def Int(num=0):
+	try:
+		out=int(float(str(num)));
+	except:
+		out=NAN;
+	return(out);
+
+def repeat(num=1,character=" "):
+	try:
+		out=character*Int(num);
+	except:
+		out=character;
+	return(out);
+
+def spc(num=1):
+	return(repeat(num," "));
+
+
+def gotoxy(x,y):
+	print(ESC+"["+str(y)+";"+str(x)+"H",end="");
+
+def locate(y,x):
+	gotoxy(x,y);
+
+def color(Ink=None,Paper=None):
+	global INK,PAPER;
+	if(type(Ink)!=type(None)):
+		try:
+			INK=0+Int(Ink) % len(COLORS);
+		except:
+			pass;
+	if(type(Paper)!=type(None)):
+		try:
+			PAPER=0+Int(Paper) % len(COLORS);
+		except:
+			pass;
+	print(ESC+"[3"+str(COLORS[INK])+";4"+str(COLORS[PAPER])+"m",end="");
+
+def clrscr():
+	color();
+	print(ESC+"[2J"+ESC+"[0;0H\n"+ESC+"[1A",end="");
+
+def ink(Ink=None):
+	if(type(Ink)==type(None)):
+		return(INK);
+	try:
+		INK=0+Int(Ink) % len(COLORS);
+	except:
+		pass;
+	print(ESC+"[3"+str(COLORS[INK])+"m",end="");
+
+def paper(Paper=None):
+	if(type(Paper)==type(None)):
+		return(PAPER);
+	try:
+		PAPER=0+Int(Paper) % len(COLORS);
+	except:
+		pass;
+	print(ESC+"[4"+str(COLORS[PAPER])+"m",end="");
+
+
+def file_date(name):
+	try:
+		tm=file_stats(name)[MOD_TIME];
+		out=datetime.datetime.fromtimestamp(tm).strftime('%Y-%m-%d %H:%M:%S (%j|%U|%u)');
+	except:
+		out=None;
+	return(out);
+
 def main(args):
 	global WIDTH,HEIGHT;
 	vargs=list(args);
 	APP=vargs.pop(0);
 	WIDTH,HEIGHT=os.get_terminal_size();
+	
+	color(7,1);
+	clrscr();
 	print("*"*WIDTH);
 	form1="{:^"+str(WIDTH-4)+"}";
 	form2="{:<"+str(WIDTH-4)+"}";
-	for f in range(3):
+	for f in range(2):
 		print("*"," "*(WIDTH-4),"*");
-	print("*",form1.format(APP),"*");
-	for f in range(3):
+	print("*",form1.format(APP+spc(4)+file_date(APP)),"*");
+	for f in range(2):
 		print("*"," "*(WIDTH-4),"*");
 	
 	print("*"*WIDTH);
-	for f in execute("ls")[OUTPUT]:
+	out=execute("ls")[OUTPUT];
+	for f in out:
 		print("*",form2.format(f),"*");
 	
-	for f in range(1,(HEIGHT-8)//2):
+	for f in range(3,(HEIGHT-len(out))//2):
 		print("*"," "*(WIDTH-4),"*");
 	print("*"*WIDTH);
 	
-	
-	print();
 	return (0);
 
 if __name__ == '__main__':
