@@ -3,7 +3,7 @@
 #
 #  shellcon.py
 #  
-#  Copyright 2019 William Martinez Bas <metfar@gmail.com>
+#  Copyright 2019 W.S. Martinez Bas <metfar@gmail.com>
 #  
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 #  
 #  
 
+from __future__ import print_function;
 import sys;
 import subprocess;
 import os;
@@ -98,11 +99,16 @@ def execute(cmd):
 	f.write(HEADER+cmd+FOOT);
 	f.close();
 	chmod(fname,777);
-	tmp=subprocess.run([fname],timeout=TIMEOUT,input=None,capture_output=True);
+	#tmp=subprocess.run([fname],timeout=TIMEOUT,input=None,capture_output=True); tmp.stdout, tmp.stderr
+	tmp=subprocess.Popen([fname], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE);
+	output, err = tmp.communicate(b"");
+	if(VERSION==3):
+		output=str(output)[2:-1];
+		err=str(err)[2:-1];
 	os.unlink(fname);
 	out={	RETURN:	tmp.returncode,
-			OUTPUT:	str(tmp.stdout)[2:-1].split("\\n"),
-			ERROR:	str(tmp.stderr)[2:-1].split("\\n")};
+			OUTPUT:	output.split("\\n"),
+			ERROR:	err.split("\\n")};
 	return(out);
 	
 def scp(source,target):
@@ -211,27 +217,45 @@ def file_date(name):
 		out=None;
 	return(out);
 
+def get_terminal_size():
+	global WIDTH,HEIGHT,VERSION;
+	try:
+		WIDTH,HEIGHT=os.get_terminal_size();
+		VERSION=3;
+	except:
+		HEIGHT,WIDTH=os.popen("stty size","r").read().split();
+		VERSION=2;
+	
+	#for f in os.popen("stty size","r").read().split():
+	#	print(f);
+	#print(WIDTH,"_",HEIGHT);
+	#exit(1);
+	return Int(WIDTH),Int(HEIGHT);
+
+
+
 def main(args):
-	global WIDTH,HEIGHT;
 	vargs=list(args);
 	APP=vargs.pop(0);
-	WIDTH,HEIGHT=os.get_terminal_size();
+	
 	
 	color(7,1);
 	clrscr();
 	print("*"*WIDTH);
-	form1="{:^"+str(WIDTH-4)+"}";
-	form2="{:<"+str(WIDTH-4)+"}";
+	form1="*{:^"+str(WIDTH-2)+"}*";
+	form2="*{:<"+str(WIDTH-2)+"}*";
 	for f in range(2):
-		print("*"," "*(WIDTH-4),"*");
-	print("*",form1.format(APP+spc(4)+file_date(APP)),"*");
+		print("*"+(" "*(WIDTH-2))+"*");
+	print(form1.format(APP+spc(2)+file_date(APP)));
 	for f in range(2):
-		print("*"," "*(WIDTH-4),"*");
+		print("*"+(" "*(WIDTH-2))+"*");
 	
-	print("*"*WIDTH);
+	print("*"*(WIDTH));
 	out=execute("ls")[OUTPUT];
+	if(VERSION==2):
+		out=out[0].split("\n");
 	for f in out:
-		print("*",form2.format(f),"*");
+		print(form2.format(f));
 	
 	for f in range(3,(HEIGHT-len(out))//2):
 		print("*"," "*(WIDTH-4),"*");
@@ -239,6 +263,8 @@ def main(args):
 	
 	return (0);
 
+
+WIDTH,HEIGHT=get_terminal_size();
 if __name__ == '__main__':
 	sys.exit(main(sys.argv));
 
