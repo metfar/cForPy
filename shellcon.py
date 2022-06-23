@@ -3,7 +3,7 @@
 #
 #  shellcon.py
 #  
-#  Copyright 2019- W.S. Martinez Bas <metfar@gmail.com>
+#  Copyright 2019 W.S. Martinez Bas <metfar@gmail.com>
 #  
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
